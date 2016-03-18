@@ -23,8 +23,28 @@
 using namespace glm;
 using namespace std;
 
+float p0 = 0.0;
+float p1 = 0.0;
+float zoom = 2.0;
+float t = 0;
 
 void view_control(vec2& bl, vec2& tr, float dx);
+
+void controls(){
+    if(glfwGetKey(GLFW_KEY_DOWN) == GLFW_PRESS){
+        p1 -= 0.05*zoom;
+    } else if(glfwGetKey(GLFW_KEY_UP) == GLFW_PRESS){
+        p1 += 0.05*zoom;
+    } else if(glfwGetKey(GLFW_KEY_LEFT) == GLFW_PRESS){
+        p0 -= 0.05*zoom;
+    } else if(glfwGetKey(GLFW_KEY_RIGHT) == GLFW_PRESS){
+        p0 += 0.05*zoom;
+    } else if(glfwGetKey(GLFW_KEY_A) == GLFW_PRESS){
+        zoom *= 1.05;
+    } else if(glfwGetKey(GLFW_KEY_Z) == GLFW_PRESS){
+        zoom /= 1.05;
+    }
+}
 
 int main()
 {
@@ -147,6 +167,8 @@ int main()
         //===================== Dessin =====================
         //==================================================
 
+        controls();
+
 		// Definition de programID comme le shader courant
 		glUseProgram(programID);
 
@@ -154,6 +176,10 @@ int main()
 
         // Index buffer
          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+         glUniform1f(glGetUniformLocation(programID, "t"), t);
+         glUniform1f(glGetUniformLocation(programID, "p0"), p0);
+         glUniform1f(glGetUniformLocation(programID, "p1"), p1);
+         glUniform1f(glGetUniformLocation(programID, "zoom"), zoom);
         
 
 
@@ -169,6 +195,8 @@ int main()
 
 		// Echange des zones de dessin buffers
 		glfwSwapBuffers();
+
+        t++;
 
         cout << "Temps ecoule : " << cur_time << "\ts\r";
         cout.flush();
